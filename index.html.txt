@@ -1,268 +1,204 @@
-% !TeX program = lualatex
-\documentclass[12pt, a4paper]{report}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>غلاف كتاب - الكوتشينج التعليمي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;500;700;900&family=Tajawal:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #e2e8f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            perspective: 1500px;
+        }
 
-% --- 1. إعدادات الصفحة وهوامش مريحة ---
-\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm, headheight=35pt]{geometry}
-\usepackage{parskip}   % فواصل بين الفقرات
-\usepackage{setspace}  % تباعد الأسطر
-\setstretch{1.4}       % زيادة التباعد قليلاً لقراءة أسهل
+        /* 3D Book Styles */
+        .book-container {
+            position: relative;
+            width: 350px; /* Standard proportions */
+            height: 540px;
+            transform-style: preserve-3d;
+            transform: rotateY(-20deg) rotateX(10deg);
+            transition: transform 0.5s ease;
+            box-shadow: 20px 20px 30px rgba(0,0,0,0.3);
+            border-radius: 4px 10px 10px 4px;
+        }
 
-% --- 2. حزم الرسوميات والألوان ---
-\usepackage{amsmath} 
-\usepackage{graphicx}
-\usepackage{calc}
-\usepackage[table,xcdraw,svgnames]{xcolor}
-\usepackage{tikz}
-\usetikzlibrary{shapes, arrows, positioning, shadows, decorations.pathmorphing, fit}
+        .book-container:hover {
+            transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+            box-shadow: 10px 15px 25px rgba(0,0,0,0.2);
+        }
 
-% --- 3. صناديق التصميم (إعدادات مبسطة لمنع التداخل) ---
-\usepackage{tcolorbox}
-\tcbuselibrary{skins, breakable, raster}
+        .book-cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 4px 10px 10px 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem;
+            color: white;
+            border-left: 8px solid rgba(255,255,255,0.1); /* Spine fold effect */
+            box-sizing: border-box;
+        }
 
-% --- 4. إعدادات اللغة (النظام الحديث LuaLaTeX) ---
-\usepackage{fontspec}
-% استخدام bidi=basic هو الحل السحري لمشاكل التداخل في LuaLaTeX
-\usepackage[bidi=basic, layout=lists.tabular]{babel}
+        /* Spine (3D effect) */
+        .book-spine {
+            position: absolute;
+            top: 0;
+            right: 100%; /* Attach to left edge (RTL flips logic slightly visually but structure remains) */
+            width: 40px;
+            height: 100%;
+            background: #0f172a;
+            transform-origin: right;
+            transform: rotateY(-90deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-left: 1px solid rgba(255,255,255,0.1);
+        }
 
-% تفعيل اللغة العربية والإنجليزية
-\babelprovide[import, main, mapdigits]{arabic}
-\babelprovide[import, onchar=ids fonts]{english}
+        /* Texture overlay */
+        .texture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
 
-% --- 5. الخطوط (Amiri خط ممتاز ومتوفر) ---
-\babelfont{rm}{Amiri}
-\babelfont{sf}{Amiri} % نستخدم نفس الخط للعناوين لضمان التناسق
-\babelfont{tt}{FreeMono}
-
-% --- 6. تنسيق الرؤوس والعناوين ---
-\usepackage{fancyhdr}
-\usepackage{titlesec}
-\usepackage{enumitem}
-
-% تخصيص القوائم النقطية
-\setlist[itemize]{label=\textendash, leftmargin=*, itemsep=0.5em}
-
-% ألوان الهوية البصرية
-\definecolor{brandBlue}{RGB}{44, 62, 80}    
-\definecolor{brandGold}{RGB}{180, 140, 0}   
-\definecolor{softGray}{RGB}{248, 249, 250}  
-
-% إعداد الرأس والتذييل
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[R]{\textcolor{brandBlue}{\textbf{الفصل الأول}}}
-\fancyhead[L]{\textcolor{brandGold}{\textbf{الكوتشينج التعليمي}}}
-\fancyfoot[C]{\thepage}
-\renewcommand{\headrulewidth}{0.5pt}
-\renewcommand{\headrule}{\hbox to\headwidth{\color{brandGold}\leaders\hrule height \headrulewidth\hfill}}
-
-% تنسيق عناوين الأقسام
-\titleformat{\section}
-{\color{brandBlue}\normalfont\Large\bfseries}
-{\thesection}{1em}{}[{\titlerule[1.5pt]}]
-
-\titleformat{\subsection}
-{\color{brandBlue}\normalfont\large\bfseries}
-{\thesubsection}{1em}{}
-
-% --- تعريف الصناديق (تم حل مشكلة الهوامش الداخلية) ---
-
-% صندوق الاقتباس
-\newtcolorbox{quoteBox}{
-    enhanced,
-    frame hidden,
-    colback=brandGold!10,
-    borderline west={4pt}{0pt}{brandGold},
-    fontupper=\itshape\color{brandBlue},
-    arc=0mm,
-    boxsep=5mm, % هامش داخلي كبير
-    left=2mm, right=2mm, top=2mm, bottom=2mm
-}
-
-% صندوق المفاهيم (مع ضمان عدم التداخل)
-\newtcolorbox{conceptBox}[1]{
-    enhanced,
-    colback=brandBlue,
-    colframe=brandBlue,
-    coltext=white,
-    fonttitle=\bfseries\Large,
-    title={#1},
-    arc=4mm,
-    halign=center,
-    valign=center,
-    drop shadow,
-    boxsep=4mm, 
-    left=3mm, right=3mm
-}
-
-% صندوق "خرافة وحقيقة" (تصميم بسيط وقوي)
-\newtcolorbox{mythBox}[2]{
-    enhanced,
-    colback=white,
-    colframe=brandBlue,
-    fonttitle=\bfseries,
-    title={#1},
-    attach boxed title to top center={yshift=-3mm},
-    boxed title style={colback=brandBlue, arc=5mm},
-    drop shadow,
-    breakable,
-    boxsep=4mm,
-    top=5mm, % مساحة إضافية في الأعلى للعنوان
-    bottom=3mm,
-    left=3mm, right=3mm
-}
-
-% صندوق المبادئ (للشبكة)
-\newtcolorbox{principleBox}[1]{
-    colback=softGray, 
-    colframe=brandBlue,
-    title={#1},
-    fonttitle=\bfseries\small,
-    arc=2mm,
-    boxsep=3mm,
-    left=2mm, right=2mm, top=2mm, bottom=2mm,
-    valign=center,
-    height=4cm % تثبيت الارتفاع لضمان التساوي
-}
-
-\begin{document}
-
-% ==========================================
-% صفحة الغلاف
-% ==========================================
-\begin{titlepage}
-    \begin{tikzpicture}[remember picture, overlay]
-        % الخلفية الجانبية
-        \fill[brandBlue] (current page.north west) rectangle ([xshift=3cm]current page.south west);
-        \fill[brandGold] ([xshift=2.8cm]current page.north west) rectangle ([xshift=3.2cm]current page.south west);
-        % دائرة جمالية
-        \node[opacity=0.1, circle, fill=brandBlue, minimum size=12cm] at ([xshift=5cm, yshift=-10cm]current page.north east) {};
-    \end{tikzpicture}
-    
-    \vspace*{5cm}
-    \hspace*{2cm}
-    \begin{minipage}{0.75\textwidth}
-        \textcolor{brandBlue}{\fontsize{40}{50}\selectfont \textbf{دليل الكوتشينج}} \\[0.5cm]
-        \textcolor{brandGold}{\fontsize{30}{40}\selectfont \textbf{التعليمي}} \\[1cm]
-        \Large \textbf{الفصل الأول: الأسس، المبادئ، ودورة التحسين}
+        /* Typography */
+        .title-font {
+            font-family: 'Cairo', sans-serif;
+            line-height: 1.2;
+        }
         
-        \vspace{4cm}
-        \hrule height 2pt color brandBlue
-        \vspace{1cm}
-        \large تأليف: \\
-        \textbf{أ. محمد علي عسيري} \\
-        \small كوتش محترف معتمد (PCC) بمعايير الاتحاد الدولي للكوتشينج (ICF)
-    \end{minipage}
-\end{titlepage}
+        .author-font {
+            font-family: 'Amiri', serif;
+        }
 
-\newpage
-\tableofcontents
-\newpage
+        .gold-text {
+            color: #fbbf24;
+            background: linear-gradient(to bottom, #fcd34d, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+        }
 
-% ==========================================
-% المحتوى
-% ==========================================
+        .gold-border {
+            border-color: #d97706;
+        }
 
-\section{مقدمة: لماذا الآن؟}
-في ظل الضغوط المتزايدة على المعلمين، ومعدلات "الاحتراق الوظيفي" المرتفعة عالمياً وعربياً، لم تعد ورش العمل التقليدية (Training Workshops) كافية. تشير الدراسات إلى أن ورش العمل التقليدية تنقل فقط \textbf{10\%} من المهارات إلى التطبيق العملي، بينما يرفع الكوتشينج هذه النسبة إلى أكثر من \textbf{80\%} (Joyce \& Showers).
+        /* Graphic Element */
+        .graphic-circle {
+            width: 150px;
+            height: 150px;
+            border: 2px solid rgba(251, 191, 36, 0.3);
+            border-radius: 50%;
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.1);
+        }
+        
+        .graphic-inner {
+            font-size: 4rem;
+            color: rgba(251, 191, 36, 0.8);
+        }
 
-\vspace{1cm}
+    </style>
+</head>
+<body>
 
-\begin{quoteBox}
-"الكوتشينج ليس إصلاحاً للمعلم السيء، بل هو وسيلة لإطلاق العنان لإمكانات كل معلم، حتى الأكثر تميزاً منهم."
-\end{quoteBox}
+    <!-- Main Controls -->
+    <div class="fixed top-5 left-5 z-50 flex flex-col gap-3">
+        <div class="bg-white p-4 rounded-lg shadow-lg max-w-xs">
+            <h3 class="font-bold text-gray-800 mb-2 border-b pb-2">خيارات العرض</h3>
+            <p class="text-sm text-gray-600 mb-2">هذا نموذج تفاعلي ثلاثي الأبعاد.</p>
+            <button onclick="document.querySelector('.book-container').style.transform = 'rotateY(0deg) rotateX(0deg)'" class="w-full bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 transition mb-2">عرض مسطح (للطباعة)</button>
+            <button onclick="document.querySelector('.book-container').style.transform = 'rotateY(-20deg) rotateX(10deg)'" class="w-full bg-gray-600 text-white py-1 px-3 rounded hover:bg-gray-700 transition">عرض ثلاثي الأبعاد</button>
+        </div>
+    </div>
 
-\section{ما هو الكوتشينج التعليمي؟}
-الكوتشينج التعليمي هو علاقة مهنية قائمة على \textbf{الشراكة} (Partnership) بين "الكوتش" والمعلم. لا يمتلك الكوتش السلطة على المعلم (مثل المدير)، بل يمتلك "أدوات الحوار والملاحظة".
+    <!-- Book Mockup -->
+    <div class="book-container bg-gray-900">
+        <!-- Spine -->
+        <div class="book-spine text-gray-400 text-xs">
+            <span style="transform: rotate(90deg); white-space: nowrap;">محمد علي عبدالله عسيري - الكوتشينج التعليمي</span>
+        </div>
 
-\subsection*{المعادلة الأساسية للكوتشينج:}
-\[ \text{ملاحظة دقيقة} + \text{بيانات موضوعية} + \text{حوار تأملي} = \text{تحسن مستدام} \]
+        <!-- Cover Face -->
+        <div class="book-cover relative">
+            <div class="texture"></div>
 
-\newpage
+            <!-- Top: Author -->
+            <div class="z-10 text-center mt-6">
+                <p class="text-gray-300 text-sm tracking-widest mb-1">إعداد وتأليف</p>
+                <h2 class="author-font text-xl font-bold text-white tracking-wide">محمد علي عبدالله عسيري</h2>
+            </div>
 
-% --- المبادئ السبعة ---
-\section{المبادئ السبعة للكوتشينج الفعال (Jim Knight)}
-يقوم الكوتشينج الناجح على مبادئ أساسية تضمن احترام المعلم ومهنيته:
+            <!-- Middle: Title & Graphic -->
+            <div class="z-10 text-center flex flex-col items-center justify-center flex-grow mt-4 relative">
+                
+                <!-- Abstract Symbolic Graphic -->
+                <div class="graphic-circle mb-6">
+                     <!-- Icon representing Growth/Mindset -->
+                    <i class="fa-solid fa-lightbulb graphic-inner"></i>
+                </div>
 
-% استخدام شبكة بسيطة لمنع التداخل
-\begin{tcbraster}[raster columns=2, raster equal height, raster column skip=5mm, raster row skip=5mm]
-    \begin{principleBox}{1. المساواة (Equality)}
-    الكوتش والمعلم متساويان في القيمة المهنية، لا يوجد "رئيس" و"مرؤوس" في الجلسة.
-    \end{principleBox}
-    
-    \begin{principleBox}{2. الاختيار (Choice)}
-    المعلم هو من يختار الأهداف التي يريد العمل عليها، مما يزيد من التزامه.
-    \end{principleBox}
-    
-    \begin{principleBox}{3. الصوت (Voice)}
-    يجب أن يُسمع صوت المعلم وتُحترم آراؤه وأفكاره حول ممارساته الصفية.
-    \end{principleBox}
-    
-    \begin{principleBox}{4. الحوار (Dialogue)}
-    العملية هي "تفكير مشترك" وليست إلقاء محاضرات من طرف واحد.
-    \end{principleBox}
-\end{tcbraster}
+                <h1 class="title-font text-5xl font-bold mb-2 gold-text">الكوتشينج<br>التعليمي</h1>
+                <div class="w-24 h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent my-4"></div>
+                <p class="text-gray-200 text-sm font-light leading-relaxed max-w-[80%] mx-auto">
+                    تمكين المعلمين بالتحفيز والتطوير<br>الفردي المخصص
+                </p>
+            </div>
 
-\newpage
+            <!-- Bottom: Credentials -->
+            <div class="z-10 mt-auto mb-6">
+                <div class="flex flex-col items-center gap-3">
+                    <!-- Credentials Badge style -->
+                    <div class="bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-full">
+                        <p class="text-xs text-center font-medium text-yellow-100">
+                            <i class="fa-solid fa-certificate ml-1"></i>
+                            كوتش محترف معتمد <span class="font-bold text-white font-sans mx-1">PCC</span> بمعايير <span class="font-bold text-white font-sans mx-1">ICF</span>
+                        </p>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 opacity-80">
+                         <div class="h-px w-8 bg-gray-400"></div>
+                         <p class="text-sm font-bold text-gray-300">معلم خبير</p>
+                         <div class="h-px w-8 bg-gray-400"></div>
+                    </div>
+                </div>
+            </div>
 
-% --- دورة الكوتشينج (تم توسيع الرسم لمنع التداخل) ---
-\section{دورة الكوتشينج: كيف تعمل؟ (The Impact Cycle)}
-تعتمد عملية الكوتشينج على دورة منهجية لضمان النتائج:
+            <!-- Decorative Corners -->
+            <div class="absolute top-4 right-4 w-16 h-16 border-t-2 border-r-2 border-yellow-500/20 rounded-tr-xl z-0"></div>
+            <div class="absolute bottom-4 left-4 w-16 h-16 border-b-2 border-l-2 border-yellow-500/20 rounded-bl-xl z-0"></div>
 
-\vspace{1cm}
-\begin{center}
-\begin{tikzpicture}[
-    node distance=5cm, % زيادة المسافة بين الدوائر
-    phase/.style={circle, draw=brandBlue, fill=white, line width=1mm, minimum size=3.5cm, align=center, text width=2.5cm, drop shadow},
-    arrow/.style={->, >=stealth, line width=1mm, color=brandGold, bend left=45}
-]
-    % العقد (Nodes)
-    \node[phase] (identify) {\textbf{1. التحديد} \\ (Identify)};
-    \node[phase, below right=of identify] (learn) {\textbf{2. التعلم} \\ (Learn)};
-    \node[phase, below left=of identify] (improve) {\textbf{3. التحسين} \\ (Improve)};
+        </div>
+    </div>
 
-    % الأسهم
-    \draw[arrow] (identify) to node[auto] {} (learn);
-    \draw[arrow] (learn) to node[auto] {} (improve);
-    \draw[arrow] (improve) to node[auto] {} (identify);
-\end{tikzpicture}
-\end{center}
-
-\begin{description}[style=multiline, leftmargin=3.5cm, font=\bfseries\color{brandBlue}]
-    \item[1. مرحلة التحديد:] تحديد هدف واضح وواقعي (PEERS Goal) بناءً على الواقع الحالي.
-    \item[2. مرحلة التعلم:] تعلم استراتيجية جديدة لتحقيق الهدف عبر النمذجة أو الشرح.
-    \item[3. مرحلة التحسين:] التطبيق والقياس والتعديل حتى تحقق النجاح المطلوب.
-\end{description}
-
-\newpage
-
-% --- خرافات وحقائق ---
-\section{خرافات شائعة حول الكوتشينج}
-
-\begin{tcbraster}[raster columns=1, raster row skip=10mm] % زيادة المسافة الرأسية
-    \begin{mythBox}{الخرافة رقم 1: الكوتشينج للمعلمين الضعفاء فقط}
-    \textbf{الحقيقة:} في عالم الرياضة، حتى أبطال الأولمبياد لديهم مدربون. الكوتشينج هو للمحترفين الطموحين الراغبين في التميز.
-    \end{mythBox}
-    
-    \begin{mythBox}{الخرافة رقم 2: الكوتش هو مقيّم سري للإدارة}
-    \textbf{الحقيقة:} الكوتشينج يتطلب "جدار حماية" صارم. ما يدور بين الكوتش والمعلم سري تماماً ولا علاقة له بتقييم الأداء السنوي.
-    \end{mythBox}
-    
-    \begin{mythBox}{الخرافة رقم 3: الكوتش يملك كل الإجابات}
-    \textbf{الحقيقة:} الكوتش ليس "غوغل". الكوتش خبير في "عملية" مساعدة المعلم على إيجاد الإجابات بنفسه، وليس تلقينه الحلول.
-    \end{mythBox}
-\end{tcbraster}
-
-\newpage
-
-% --- الخاتمة ---
-\section{الخاتمة: الخطوة الأولى}
-لقد استعرضنا الأسس النظرية في هذا الفصل. في الفصل القادم، سننتقل إلى \textbf{"الأدوات العملية"} وكيفية تطبيق جلسات الكوتشينج.
-
-\vspace{2cm}
-
-\begin{conceptBox}{تمرين تطبيقي للقارئ}
-تخيل أنك كوتش جديد، وأحد المعلمين القدامى قال لك: "لا أحتاج لمن يعلمني كيف أعمل".
-\textbf{كيف سترد عليه مستخدماً مبدأ الشراكة والاحترام؟}
-\end{conceptBox}
-
-\end{document}
+</body>
+</html>
