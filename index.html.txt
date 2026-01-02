@@ -1,12 +1,12 @@
 \documentclass[12pt, a4paper]{report}
 
 % --- إعدادات الصفحة والهوامش (نظام الكتاب) ---
-\usepackage[top=2.5cm, bottom=2.5cm, left=2cm, right=2cm, headheight=30pt]{geometry} % زيادة headheight لتجنب التحذيرات
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm, headheight=35pt]{geometry} % زيادة الهوامش قليلاً للراحة البصرية
 \usepackage{parskip}
 \usepackage{setspace}
 \setstretch{1.3}
 
-% --- حزم أساسية (تمت إضافة amsmath لإصلاح خطأ المعادلات) ---
+% --- حزم أساسية ---
 \usepackage{amsmath} 
 \usepackage{graphicx}
 
@@ -31,14 +31,14 @@
 \usepackage{titlesec}
 \usepackage{enumitem}
 
-% --- إصلاح القوائم النقطية (استبدال النقطة بشرطة لتوافق الخط) ---
-\setlist[itemize]{label=\textendash, leftmargin=*}
+% --- إصلاح القوائم النقطية ---
+\setlist[itemize]{label=\textendash, leftmargin=*, itemsep=0.5em}
 
-% --- تعريف الألوان الجديدة (لوحة ألوان هادئة واحترافية) ---
-\definecolor{brandBlue}{RGB}{44, 62, 80}    % أزرق داكن للعناوين
-\definecolor{brandGold}{RGB}{212, 172, 13}  % ذهبي للتميز
-\definecolor{softGray}{RGB}{248, 249, 250}  % خلفية فاتحة جداً
-\definecolor{alertRed}{RGB}{192, 57, 43}    % للتنبيهات
+% --- تعريف الألوان (لوحة ألوان احترافية) ---
+\definecolor{brandBlue}{RGB}{44, 62, 80}    % أزرق داكن وقور
+\definecolor{brandGold}{RGB}{180, 140, 0}   % ذهبي داكن قليلاً للقراءة المريحة
+\definecolor{softGray}{RGB}{248, 249, 250}  
+\definecolor{alertRed}{RGB}{192, 57, 43}    
 
 % --- تنسيق الرؤوس والتذييلات ---
 \pagestyle{fancy}
@@ -58,7 +58,7 @@
 {\color{brandBlue}\normalfont\large\bfseries}
 {\thesubsection}{1em}{}
 
-% --- صناديق ومكونات التصميم ---
+% --- صناديق ومكونات التصميم (محسنة لتجنب التداخل) ---
 
 % 1. صندوق الاقتباس المميز
 \newtcolorbox{quoteBox}{
@@ -67,7 +67,8 @@
     colback=brandGold!10,
     borderline west={4pt}{0pt}{brandGold},
     fontupper=\itshape\color{brandBlue},
-    arc=0mm
+    arc=0mm,
+    boxsep=3mm, left=4mm, right=4mm, top=2mm, bottom=2mm % زيادة الهوامش الداخلية
 }
 
 % 2. صندوق "خرافة vs حقيقة"
@@ -80,7 +81,8 @@
     attach boxed title to top center={yshift=-3mm},
     boxed title style={colback=brandBlue, arc=5mm},
     drop shadow,
-    breakable
+    breakable,
+    boxsep=3mm, left=3mm, right=3mm, top=5mm, bottom=3mm % مسافات كافية للنص
 }
 
 % 3. صندوق المفهوم الرئيسي (ملون)
@@ -91,10 +93,22 @@
     coltext=white,
     fonttitle=\bfseries\Large,
     title={#1},
-    arc=3mm,
+    arc=4mm,
     halign=center,
     valign=center,
-    drop shadow
+    drop shadow,
+    boxsep=3mm, left=3mm, right=3mm % منع الالتصاق بالحواف
+}
+
+% 4. صندوق المبادئ (للاستخدام داخل الشبكة)
+\newtcolorbox{principleBox}[1]{
+    colback=softGray, 
+    colframe=brandBlue,
+    title={#1},
+    fonttitle=\bfseries\small, % تصغير الخط قليلاً للعنوان ليتناسب مع الصندوق
+    arc=2mm,
+    boxsep=2mm, left=2mm, right=2mm, top=1mm, bottom=1mm,
+    valign=center
 }
 
 % --- بداية المستند ---
@@ -120,12 +134,12 @@
         \textcolor{brandGold}{\fontsize{30}{36}\selectfont \textbf{التعليمي}} \\[1cm]
         \Large \textbf{الفصل الأول: الأسس، المبادئ، ودورة التحسين}
         
-        \vspace{2cm}
+        \vspace{3cm}
         \hrule height 2pt color brandBlue
         \vspace{1cm}
-        \large إعداد وتصميم: \\
-        \textbf{مساعدك الذكي (Gemini)} \\
-        بناءً على أحدث الأبحاث التربوية
+        \large تأليف: \\
+        \textbf{أ. محمد علي عسيري} \\
+        \small كوتش محترف معتمد (PCC) بمعايير الاتحاد الدولي للكوتشينج (ICF)
     \end{minipage}
 \end{titlepage}
 
@@ -151,7 +165,6 @@
 الكوتشينج التعليمي هو علاقة مهنية قائمة على \textbf{الشراكة} (Partnership) بين "الكوتش" والمعلم. لا يمتلك الكوتش السلطة على المعلم (مثل المدير)، بل يمتلك "أدوات الحوار والملاحظة".
 
 \subsection*{المعادلة الأساسية للكوتشينج:}
-% استخدام text داخل المعادلة يتطلب حزمة amsmath
 \[ \text{ملاحظة دقيقة} + \text{بيانات موضوعية} + \text{حوار تأملي} = \text{تحسن مستدام} \]
 
 \vspace{1cm}
@@ -160,25 +173,28 @@
 \section{المبادئ السبعة للكوتشينج الفعال (Jim Knight)}
 يقوم الكوتشينج الناجح على مبادئ أساسية تضمن احترام المعلم ومهنيته:
 
-\begin{tcbraster}[raster columns=2, raster equal height]
-    \begin{tcolorbox}[colback=softGray, title=1. المساواة (Equality), colframe=brandBlue]
+\begin{tcbraster}[raster columns=2, raster equal height, raster column skip=5mm, raster row skip=5mm]
+    \begin{principleBox}{1. المساواة (Equality)}
     الكوتش والمعلم متساويان في القيمة المهنية، لا يوجد "رئيس" و"مرؤوس" في الجلسة.
-    \end{tcolorbox}
-    \begin{tcolorbox}[colback=softGray, title=2. الاختيار (Choice), colframe=brandBlue]
+    \end{principleBox}
+    
+    \begin{principleBox}{2. الاختيار (Choice)}
     المعلم هو من يختار الأهداف التي يريد العمل عليها، مما يزيد من التزامه.
-    \end{tcolorbox}
-    \begin{tcolorbox}[colback=softGray, title=3. الصوت (Voice), colframe=brandBlue]
-    يجب أن يُسمع صوت المعلم وتُحترم آراؤه حول ممارساته الصفية.
-    \end{tcolorbox}
-    \begin{tcolorbox}[colback=softGray, title=4. الحوار (Dialogue), colframe=brandBlue]
-    العملية هي "تفكير مشترك" وليست إلقاء محاضرات.
-    \end{tcolorbox}
+    \end{principleBox}
+    
+    \begin{principleBox}{3. الصوت (Voice)}
+    يجب أن يُسمع صوت المعلم وتُحترم آراؤه وأفكاره حول ممارساته الصفية.
+    \end{principleBox}
+    
+    \begin{principleBox}{4. الحوار (Dialogue)}
+    العملية هي "تفكير مشترك" وليست إلقاء محاضرات من طرف واحد.
+    \end{principleBox}
 \end{tcbraster}
 
 \newpage
 
 % ==========================================
-% دورة الكوتشينج (The Coaching Cycle) - محتوى جديد
+% دورة الكوتشينج (The Coaching Cycle)
 % ==========================================
 \section{دورة الكوتشينج: كيف تعمل؟ (The Impact Cycle)}
 تعتمد عملية الكوتشينج على دورة منهجية لضمان النتائج. هذا النموذج هو الأكثر شيوعاً عالمياً:
@@ -204,7 +220,7 @@
 \end{tikzpicture}
 \end{center}
 
-\begin{description}[style=multiline, leftmargin=3cm, font=\bfseries\color{brandBlue}]
+\begin{description}[style=multiline, leftmargin=3.5cm, font=\bfseries\color{brandBlue}]
     \item[مرحلة التحديد:] يستخدم الكوتش والمدرس الفيديو أو بيانات الطلاب لتكوين صورة واضحة عن الواقع، ثم يحددان هدفاً (PEERS Goal).
     \item[مرحلة التعلم:] يقدم الكوتش النمذجة (Modeling) أو الموارد التعليمية للمعلم ليشرح "كيف" نطبق الاستراتيجية.
     \item[مرحلة التحسين:] يطبق المعلم الاستراتيجية، ويجمع الكوتش البيانات، ويقرران معاً: هل حققنا الهدف؟ أم نحتاج لتعديل الخطة؟
@@ -218,7 +234,7 @@
 \section{خرافات شائعة حول الكوتشينج}
 غالباً ما يُساء فهم دور الكوتش في المدارس العربية، مما يولد مقاومة لدى المعلمين.
 
-\begin{tcbraster}[raster columns=1, raster row skip=5mm]
+\begin{tcbraster}[raster columns=1, raster row skip=8mm] % زيادة المسافة بين الصناديق
     
     \begin{mythBox}{الخرافة رقم 1: الكوتشينج للمعلمين الضعفاء فقط}
     \textbf{الحقيقة:} في عالم الرياضة، حتى أبطال الأولمبياد لديهم مدربون. الكوتشينج هو للمحترفين الذين يرغبون في الانتقال من "جيد" إلى "عظيم". إنه حق لكل معلم وليس عقوبة.
@@ -255,7 +271,7 @@
 
 \vspace{1cm}
 
-\begin{tcolorbox}[colback=brandBlue!5, colframe=brandBlue, title=إحصائية ملهمة (Visible Learning)]
+\begin{tcolorbox}[colback=brandBlue!5, colframe=brandBlue, title=إحصائية ملهمة (Visible Learning), boxsep=3mm, left=3mm, right=3mm]
 أثبتت أبحاث "جون هاتي" (John Hattie) أن التغذية الراجعة التكوينية للمعلمين تقع ضمن أعلى المؤثرات التي ترفع تحصيل الطلاب، بمعدل تأثير يتجاوز \textbf{0.70} (المعدل الطبيعي هو 0.40).
 \end{tcolorbox}
 
