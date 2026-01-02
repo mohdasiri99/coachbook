@@ -1,51 +1,52 @@
-% !TeX program = xelatex
+% !TeX program = lualatex
 \documentclass[12pt, a4paper]{report}
 
-% --- 1. إعدادات الصفحة ---
+% --- 1. إعدادات الصفحة وهوامش مريحة ---
 \usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm, headheight=35pt]{geometry}
-\usepackage{parskip}
-\usepackage{setspace}
-\setstretch{1.3}
+\usepackage{parskip}   % فواصل بين الفقرات
+\usepackage{setspace}  % تباعد الأسطر
+\setstretch{1.4}       % زيادة التباعد قليلاً لقراءة أسهل
 
-% --- 2. الحزم الأساسية والرسومية (يجب تحميلها أولاً) ---
+% --- 2. حزم الرسوميات والألوان ---
 \usepackage{amsmath} 
 \usepackage{graphicx}
 \usepackage{calc}
 \usepackage[table,xcdraw,svgnames]{xcolor}
 \usepackage{tikz}
-\usetikzlibrary{shapes, arrows, positioning, shadows, decorations.pathmorphing}
+\usetikzlibrary{shapes, arrows, positioning, shadows, decorations.pathmorphing, fit}
 
-% --- 3. صناديق التصميم (TColorBox) ---
+% --- 3. صناديق التصميم (إعدادات مبسطة لمنع التداخل) ---
 \usepackage{tcolorbox}
-\tcbuselibrary{skins, breakable, raster, hooks}
+\tcbuselibrary{skins, breakable, raster}
 
-% --- 4. حزم التنسيق الإضافية ---
+% --- 4. إعدادات اللغة (النظام الحديث LuaLaTeX) ---
+\usepackage{fontspec}
+% استخدام bidi=basic هو الحل السحري لمشاكل التداخل في LuaLaTeX
+\usepackage[bidi=basic, layout=lists.tabular]{babel}
+
+% تفعيل اللغة العربية والإنجليزية
+\babelprovide[import, main, mapdigits]{arabic}
+\babelprovide[import, onchar=ids fonts]{english}
+
+% --- 5. الخطوط (Amiri خط ممتاز ومتوفر) ---
+\babelfont{rm}{Amiri}
+\babelfont{sf}{Amiri} % نستخدم نفس الخط للعناوين لضمان التناسق
+\babelfont{tt}{FreeMono}
+
+% --- 6. تنسيق الرؤوس والعناوين ---
 \usepackage{fancyhdr}
 \usepackage{titlesec}
 \usepackage{enumitem}
 
-% --- 5. إعدادات اللغة والخطوط (الترتيب هنا حاسم لـ XeLaTeX) ---
-\usepackage{fontspec}
-
-% استخدام polyglossia بدلاً من babel لتوافق أفضل مع XeLaTeX والعربية
-\usepackage{polyglossia}
-\setmainlanguage[calendar=gregorian, numerals=maghrib]{arabic}
-\setotherlanguage{english}
-
-% تعيين الخطوط (خطوط متوفرة قياسياً في Overleaf)
-\newfontfamily\arabicfont[Script=Arabic, Scale=1.1]{Amiri}
-\newfontfamily\arabicfontsf[Script=Arabic, Scale=1.1]{Amiri} % نستخدم أميري للعناوين أيضاً لضمان الظهور
-\newfontfamily\englishfont{FreeSans}
-
-% --- إعدادات القوائم (يمين لليسار) ---
+% تخصيص القوائم النقطية
 \setlist[itemize]{label=\textendash, leftmargin=*, itemsep=0.5em}
 
-% --- تعريف الألوان ---
+% ألوان الهوية البصرية
 \definecolor{brandBlue}{RGB}{44, 62, 80}    
 \definecolor{brandGold}{RGB}{180, 140, 0}   
 \definecolor{softGray}{RGB}{248, 249, 250}  
 
-% --- تنسيق الرؤوس والتذييلات ---
+% إعداد الرأس والتذييل
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[R]{\textcolor{brandBlue}{\textbf{الفصل الأول}}}
@@ -54,7 +55,7 @@
 \renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\headrule}{\hbox to\headwidth{\color{brandGold}\leaders\hrule height \headrulewidth\hfill}}
 
-% --- تخصيص عناوين الأقسام ---
+% تنسيق عناوين الأقسام
 \titleformat{\section}
 {\color{brandBlue}\normalfont\Large\bfseries}
 {\thesection}{1em}{}[{\titlerule[1.5pt]}]
@@ -63,9 +64,9 @@
 {\color{brandBlue}\normalfont\large\bfseries}
 {\thesubsection}{1em}{}
 
-% --- تعريف الصناديق (معدلة لتناسب XeLaTeX) ---
+% --- تعريف الصناديق (تم حل مشكلة الهوامش الداخلية) ---
 
-% 1. صندوق الاقتباس
+% صندوق الاقتباس
 \newtcolorbox{quoteBox}{
     enhanced,
     frame hidden,
@@ -73,25 +74,11 @@
     borderline west={4pt}{0pt}{brandGold},
     fontupper=\itshape\color{brandBlue},
     arc=0mm,
-    boxsep=3mm, left=4mm, right=4mm, top=2mm, bottom=2mm
+    boxsep=5mm, % هامش داخلي كبير
+    left=2mm, right=2mm, top=2mm, bottom=2mm
 }
 
-% 2. صندوق خرافة vs حقيقة
-\newtcolorbox{mythBox}[2]{
-    enhanced,
-    colback=white,
-    colframe=brandBlue,
-    fonttitle=\bfseries,
-    title={#1},
-    attach boxed title to top center={yshift=-3mm},
-    boxed title style={colback=brandBlue, arc=5mm},
-    drop shadow,
-    breakable,
-    boxsep=3mm, left=3mm, right=3mm, top=5mm, bottom=3mm,
-    before upper={\par\noindent}, % إصلاح اتجاه النص
-}
-
-% 3. صندوق المفهوم الرئيسي
+% صندوق المفاهيم (مع ضمان عدم التداخل)
 \newtcolorbox{conceptBox}[1]{
     enhanced,
     colback=brandBlue,
@@ -103,19 +90,38 @@
     halign=center,
     valign=center,
     drop shadow,
-    boxsep=3mm, left=3mm, right=3mm
+    boxsep=4mm, 
+    left=3mm, right=3mm
 }
 
-% 4. صندوق المبادئ
+% صندوق "خرافة وحقيقة" (تصميم بسيط وقوي)
+\newtcolorbox{mythBox}[2]{
+    enhanced,
+    colback=white,
+    colframe=brandBlue,
+    fonttitle=\bfseries,
+    title={#1},
+    attach boxed title to top center={yshift=-3mm},
+    boxed title style={colback=brandBlue, arc=5mm},
+    drop shadow,
+    breakable,
+    boxsep=4mm,
+    top=5mm, % مساحة إضافية في الأعلى للعنوان
+    bottom=3mm,
+    left=3mm, right=3mm
+}
+
+% صندوق المبادئ (للشبكة)
 \newtcolorbox{principleBox}[1]{
     colback=softGray, 
     colframe=brandBlue,
     title={#1},
     fonttitle=\bfseries\small,
     arc=2mm,
-    boxsep=2mm, left=2mm, right=2mm, top=1mm, bottom=1mm,
+    boxsep=3mm,
+    left=2mm, right=2mm, top=2mm, bottom=2mm,
     valign=center,
-    before upper={\par\noindent} % إصلاح اتجاه النص
+    height=4cm % تثبيت الارتفاع لضمان التساوي
 }
 
 \begin{document}
@@ -125,19 +131,21 @@
 % ==========================================
 \begin{titlepage}
     \begin{tikzpicture}[remember picture, overlay]
+        % الخلفية الجانبية
         \fill[brandBlue] (current page.north west) rectangle ([xshift=3cm]current page.south west);
         \fill[brandGold] ([xshift=2.8cm]current page.north west) rectangle ([xshift=3.2cm]current page.south west);
-        \node[opacity=0.1, circle, fill=brandBlue, minimum size=10cm] at ([xshift=8cm, yshift=-5cm]current page.north east) {};
+        % دائرة جمالية
+        \node[opacity=0.1, circle, fill=brandBlue, minimum size=12cm] at ([xshift=5cm, yshift=-10cm]current page.north east) {};
     \end{tikzpicture}
     
-    \vspace*{4cm}
+    \vspace*{5cm}
     \hspace*{2cm}
-    \begin{minipage}{0.7\textwidth}
-        \textcolor{brandBlue}{\fontsize{35}{45}\selectfont \textbf{دليل الكوتشينج}} \\[0.5cm]
-        \textcolor{brandGold}{\fontsize{25}{30}\selectfont \textbf{التعليمي}} \\[1cm]
+    \begin{minipage}{0.75\textwidth}
+        \textcolor{brandBlue}{\fontsize{40}{50}\selectfont \textbf{دليل الكوتشينج}} \\[0.5cm]
+        \textcolor{brandGold}{\fontsize{30}{40}\selectfont \textbf{التعليمي}} \\[1cm]
         \Large \textbf{الفصل الأول: الأسس، المبادئ، ودورة التحسين}
         
-        \vspace{3cm}
+        \vspace{4cm}
         \hrule height 2pt color brandBlue
         \vspace{1cm}
         \large تأليف: \\
@@ -151,11 +159,13 @@
 \newpage
 
 % ==========================================
-% المحتوى الرئيسي
+% المحتوى
 % ==========================================
 
 \section{مقدمة: لماذا الآن؟}
 في ظل الضغوط المتزايدة على المعلمين، ومعدلات "الاحتراق الوظيفي" المرتفعة عالمياً وعربياً، لم تعد ورش العمل التقليدية (Training Workshops) كافية. تشير الدراسات إلى أن ورش العمل التقليدية تنقل فقط \textbf{10\%} من المهارات إلى التطبيق العملي، بينما يرفع الكوتشينج هذه النسبة إلى أكثر من \textbf{80\%} (Joyce \& Showers).
+
+\vspace{1cm}
 
 \begin{quoteBox}
 "الكوتشينج ليس إصلاحاً للمعلم السيء، بل هو وسيلة لإطلاق العنان لإمكانات كل معلم، حتى الأكثر تميزاً منهم."
@@ -167,11 +177,13 @@
 \subsection*{المعادلة الأساسية للكوتشينج:}
 \[ \text{ملاحظة دقيقة} + \text{بيانات موضوعية} + \text{حوار تأملي} = \text{تحسن مستدام} \]
 
-\vspace{1cm}
+\newpage
 
+% --- المبادئ السبعة ---
 \section{المبادئ السبعة للكوتشينج الفعال (Jim Knight)}
 يقوم الكوتشينج الناجح على مبادئ أساسية تضمن احترام المعلم ومهنيته:
 
+% استخدام شبكة بسيطة لمنع التداخل
 \begin{tcbraster}[raster columns=2, raster equal height, raster column skip=5mm, raster row skip=5mm]
     \begin{principleBox}{1. المساواة (Equality)}
     الكوتش والمعلم متساويان في القيمة المهنية، لا يوجد "رئيس" و"مرؤوس" في الجلسة.
@@ -192,69 +204,65 @@
 
 \newpage
 
-% ==========================================
-% دورة الكوتشينج
-% ==========================================
+% --- دورة الكوتشينج (تم توسيع الرسم لمنع التداخل) ---
 \section{دورة الكوتشينج: كيف تعمل؟ (The Impact Cycle)}
-تعتمد عملية الكوتشينج على دورة منهجية لضمان النتائج. هذا النموذج هو الأكثر شيوعاً عالمياً:
+تعتمد عملية الكوتشينج على دورة منهجية لضمان النتائج:
 
 \vspace{1cm}
 \begin{center}
 \begin{tikzpicture}[
-    node distance=2.5cm,
-    phase/.style={circle, draw=brandBlue, fill=white, ultra thick, minimum size=3.5cm, align=center, text width=2.5cm, drop shadow},
-    arrow/.style={->, >=stealth, ultra thick, color=brandGold, bend left=45}
+    node distance=5cm, % زيادة المسافة بين الدوائر
+    phase/.style={circle, draw=brandBlue, fill=white, line width=1mm, minimum size=3.5cm, align=center, text width=2.5cm, drop shadow},
+    arrow/.style={->, >=stealth, line width=1mm, color=brandGold, bend left=45}
 ]
+    % العقد (Nodes)
     \node[phase] (identify) {\textbf{1. التحديد} \\ (Identify)};
     \node[phase, below right=of identify] (learn) {\textbf{2. التعلم} \\ (Learn)};
     \node[phase, below left=of identify] (improve) {\textbf{3. التحسين} \\ (Improve)};
 
-    \draw[arrow] (identify) to node[right, text=brandBlue] {} (learn);
-    \draw[arrow] (learn) to node[below, text=brandBlue] {} (improve);
-    \draw[arrow] (improve) to node[left, text=brandBlue] {} (identify);
+    % الأسهم
+    \draw[arrow] (identify) to node[auto] {} (learn);
+    \draw[arrow] (learn) to node[auto] {} (improve);
+    \draw[arrow] (improve) to node[auto] {} (identify);
 \end{tikzpicture}
 \end{center}
 
 \begin{description}[style=multiline, leftmargin=3.5cm, font=\bfseries\color{brandBlue}]
-    \item[1. مرحلة التحديد:] تحديد هدف واضح وواقعي (PEERS Goal).
-    \item[2. مرحلة التعلم:] تعلم استراتيجية جديدة لتحقيق الهدف عبر النمذجة.
-    \item[3. مرحلة التحسين:] التطبيق والقياس والتعديل حتى تحقق النجاح.
+    \item[1. مرحلة التحديد:] تحديد هدف واضح وواقعي (PEERS Goal) بناءً على الواقع الحالي.
+    \item[2. مرحلة التعلم:] تعلم استراتيجية جديدة لتحقيق الهدف عبر النمذجة أو الشرح.
+    \item[3. مرحلة التحسين:] التطبيق والقياس والتعديل حتى تحقق النجاح المطلوب.
 \end{description}
 
 \newpage
 
-% ==========================================
-% خرافات وحقائق
-% ==========================================
+% --- خرافات وحقائق ---
 \section{خرافات شائعة حول الكوتشينج}
 
-\begin{tcbraster}[raster columns=1, raster row skip=8mm]
+\begin{tcbraster}[raster columns=1, raster row skip=10mm] % زيادة المسافة الرأسية
     \begin{mythBox}{الخرافة رقم 1: الكوتشينج للمعلمين الضعفاء فقط}
-    \textbf{الحقيقة:} في عالم الرياضة، حتى أبطال الأولمبياد لديهم مدربون. الكوتشينج هو للمحترفين الطموحين.
+    \textbf{الحقيقة:} في عالم الرياضة، حتى أبطال الأولمبياد لديهم مدربون. الكوتشينج هو للمحترفين الطموحين الراغبين في التميز.
     \end{mythBox}
     
     \begin{mythBox}{الخرافة رقم 2: الكوتش هو مقيّم سري للإدارة}
-    \textbf{الحقيقة:} الكوتشينج يتطلب "جدار حماية" صارم. ما يدور بين الكوتش والمعلم سري تماماً ولا علاقة له بتقييم الأداء.
+    \textbf{الحقيقة:} الكوتشينج يتطلب "جدار حماية" صارم. ما يدور بين الكوتش والمعلم سري تماماً ولا علاقة له بتقييم الأداء السنوي.
     \end{mythBox}
     
     \begin{mythBox}{الخرافة رقم 3: الكوتش يملك كل الإجابات}
-    \textbf{الحقيقة:} الكوتش ليس "غوغل". الكوتش خبير في "عملية" مساعدة المعلم على إيجاد الإجابات بنفسه.
+    \textbf{الحقيقة:} الكوتش ليس "غوغل". الكوتش خبير في "عملية" مساعدة المعلم على إيجاد الإجابات بنفسه، وليس تلقينه الحلول.
     \end{mythBox}
 \end{tcbraster}
 
 \newpage
 
-% ==========================================
-% الخاتمة
-% ==========================================
+% --- الخاتمة ---
 \section{الخاتمة: الخطوة الأولى}
-لقد استعرضنا الأسس النظرية. في الفصل القادم، سننتقل إلى \textbf{"الأدوات العملية"}.
+لقد استعرضنا الأسس النظرية في هذا الفصل. في الفصل القادم، سننتقل إلى \textbf{"الأدوات العملية"} وكيفية تطبيق جلسات الكوتشينج.
 
-\vspace{1cm}
+\vspace{2cm}
 
 \begin{conceptBox}{تمرين تطبيقي للقارئ}
-تخيل أنك كوتش جديد، وأحد المعلمين قال لك: "لا أحتاج لمن يعلمني كيف أعمل".
-\textbf{كيف ترد عليه مستخدماً مبدأ الشراكة؟}
+تخيل أنك كوتش جديد، وأحد المعلمين القدامى قال لك: "لا أحتاج لمن يعلمني كيف أعمل".
+\textbf{كيف سترد عليه مستخدماً مبدأ الشراكة والاحترام؟}
 \end{conceptBox}
 
 \end{document}
